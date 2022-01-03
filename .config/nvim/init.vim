@@ -106,10 +106,27 @@ map <Leader>z :let @*=(expand("%:p") . ":" . line("."))<CR>
 map <Leader>c :%s/\s\+$//e<CR>
 " map <Leader>gb :Gbrowse<CR>
 map <leader>r :Ranger<CR>
-map <Leader>vp :VimuxPromptCommand<CR>
-map <Leader>vl :VimuxRunLastCommand<CR>
-map <Leader>vi :VimuxInspectRunner<CR>
-map <leader>vz :VimuxZoomRunner<CR>
+
+" Prompt for a command to run
+ map <Leader>vp :VimuxPromptCommand<CR>
+
+ " Run last command executed by VimuxRunCommand
+ map <Leader>vl :VimuxRunLastCommand<CR>
+
+ " Inspect runner pane
+ map <Leader>vi :VimuxInspectRunner<CR>
+
+ " Close vim tmux runner opened by VimuxRunCommand
+ map <Leader>vq :VimuxCloseRunner<CR>
+
+ " Interupt any command running in the runner pane
+ map <Leader>vx :VimuxInterruptRunner<CR>
+
+ " Zoom the runner pane (use <bind-key> z to restore runner pane)
+ map <Leader>vz :call VimuxZoomRunner()<CR>
+
+ " Clear the terminal screen of the runner pane.
+ map <Leader>v<C-l> :VimuxClearTerminalScreen<CR>
 
 " Using Lua functions
 nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
@@ -133,6 +150,9 @@ map <C-H> :bprev<CR>
 syntax off
 set background=dark
 filetype plugin indent on
+
+let g:VimuxOrientation = "h"
+let g:VimuxHeight = "40"
 
 " Nerd tree stuff
 " map <C-p> :NERDTreeToggle<CR>
