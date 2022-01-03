@@ -27,8 +27,8 @@ let g:ruby_path = system('echo $HOME/.rbenv/shims')
 set clipboard=unnamed  " use system clipboard
 set termguicolors
 " set Vim-specific sequences for RGB colors
-let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+" let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+" let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 let g:ranger_map_keys = 0
 " let g:lightline = { 'colorscheme': 'nightfly' }
 
@@ -40,11 +40,11 @@ set rtp+=/usr/local/opt/fzf " after installing fzf through: brew install fzf
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin(stdpath('data') . '/plugged')
 
-Plug 'tpope/vim-rails'
-Plug 'majutsushi/tagbar'
+" Plug 'tpope/vim-rails'
+" Plug 'majutsushi/tagbar'
 " Plug 'tpope/vim-fugitive'
 " Plug 'wycats/nerdtree'
-Plug 'junegunn/fzf.vim'
+" Plug 'junegunn/fzf.vim'
 " Plug 'vim-airline/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
 " Plug 'janko/vim-test'
@@ -52,7 +52,7 @@ Plug 'elixir-editors/vim-elixir'
 " Plug 'scrooloose/syntastic'
 Plug 'tpope/vim-sensible'
 Plug 'isRuslan/vim-es6'
-Plug 'airblade/vim-gitgutter'
+" Plug 'airblade/vim-gitgutter'
 Plug 'easymotion/vim-easymotion'
 " Plug 'itchyny/lightline.vim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
@@ -61,13 +61,15 @@ Plug 'nvim-lualine/lualine.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'ThePrimeagen/vim-be-good'
 
+Plug 'francoiscabrol/ranger.vim'
+Plug 'rbgrouleff/bclose.vim'
+Plug 'preservim/vimux'
+
+
 " color scheme
 Plug 'flrnprz/plastic.vim'
 Plug 'ajmwagar/vim-deus'
 Plug 'bluz71/vim-nightfly-guicolors'
-Plug 'francoiscabrol/ranger.vim'
-Plug 'rbgrouleff/bclose.vim'
-Plug 'preservim/vimux'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -92,17 +94,17 @@ colorscheme nightfly
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plug stuff after this line
 "
-
-let mapleader = ","
-map <Leader>n :set number! <CR>
-map <Leader>h :History <CR>
-map <Leader>a :Ag <CR>
-map <Leader>l :Lines <CR>
+nnoremap <SPACE> <Nop>
+let mapleader = " "
+" map <Leader>n :set number! <CR>
+" map <Leader>h :History <CR>
+" map <Leader>a :Ag <CR>
+" map <Leader>l :Lines <CR>
 map <Leader>y :let @*=expand("%:p")<CR>
 map <Leader>z :let @*=(expand("%:p") . ":" . line("."))<CR>
-map <Leader>t :term<CR>
+" map <Leader>t :term<CR>
 map <Leader>c :%s/\s\+$//e<CR>
-map <Leader>gb :Gbrowse<CR>
+" map <Leader>gb :Gbrowse<CR>
 map <leader>r :Ranger<CR>
 map <Leader>vp :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
@@ -133,14 +135,14 @@ set background=dark
 filetype plugin indent on
 
 " Nerd tree stuff
-map <C-p> :NERDTreeToggle<CR>
+" map <C-p> :NERDTreeToggle<CR>
 " Close window if only nerd tree left
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 "vim-test settings
-let test#vim#term_position="belowright"
-let g:test#strategy='vimterminal'
-let test#ruby#rspec#executable = 'bundle exec rspec'
+" let test#vim#term_position="belowright"
+" let g:test#strategy='vimterminal'
+" let test#ruby#rspec#executable = 'bundle exec rspec'
 
 " syntastic settings
 " set statusline+=%#warningmsg#
