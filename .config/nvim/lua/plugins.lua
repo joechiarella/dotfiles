@@ -47,7 +47,8 @@ return require("packer").startup(function()
 
 	use({
 		"lewis6991/gitsigns.nvim",
-		require("gitsigns").setup({
+		config = function()
+      require("gitsigns").setup({
 			current_line_blame = true,
 			current_line_blame_opts = {
 				virt_text = true,
@@ -104,9 +105,10 @@ return require("packer").startup(function()
 
 				-- Text object
 				map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
-			end,
-		}),
-	})
+      end
+    })
+    end
+   })
 
 	use("mrjones2014/smart-splits.nvim")
 	use("vim-test/vim-test")
@@ -368,6 +370,8 @@ return require("packer").startup(function()
 		--client.resolved_capabilities.document_formatting = false
 		--client.resolved_capabilities.document_range_formatting = false
 	end
+	use({ "ms-jpq/coq_nvim" })
+	use({ "ms-jpq/coq.artifacts" })
 
 	local coq = require("coq")
 	-- vim.lsp.set_log_level("debug")
@@ -390,8 +394,6 @@ return require("packer").startup(function()
 		cmd = { "/Users/joechiarella/.lsp/elixir-ls/language_server.sh" },
 	}))
 
-	use({ "ms-jpq/coq_nvim" })
-	use({ "ms-jpq/coq.artifacts" })
 
 	use("rktjmp/highlight-current-n.nvim")
 	use({
