@@ -246,12 +246,12 @@ return require("packer").startup(function()
 
 				-- sql
 				null_ls.builtins.diagnostics.sqlfluff.with({
-					extra_args = { "--dialect", "postgres", "--exclude-rules", "L022,L044" }, -- change to your dialect
+					extra_args = { "--dialect", "postgres", "--exclude-rules", "L022,L044,L031" }, -- change to your dialect
 				}),
 
 				--null_ls.builtins.formatting.sql_formatter,
 				null_ls.builtins.formatting.sqlfluff.with({
-					extra_args = { "--dialect", "postgres", "--exclude-rules", "L022,L044" }, -- change to your dialect
+					extra_args = { "--dialect", "postgres", "--exclude-rules", "L022,L044,L031" }, -- change to your dialect
 				}),
 			}
 
@@ -372,6 +372,11 @@ return require("packer").startup(function()
 	local coq = require("coq")
 	-- vim.lsp.set_log_level("debug")
 	require("lspconfig").solargraph.setup(coq.lsp_ensure_capabilities({
+		cmd = { "solargraph", "stdio" },
+		--cmd = { "bundle", "exec", "solargraph", "stdio" },
+		flags = {
+			debounce_text_changes = 150,
+		},
 		on_attach = on_attach,
 	}))
 	require("lspconfig").elixirls.setup(coq.lsp_ensure_capabilities({

@@ -1,5 +1,7 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
+#export KITTY_LISTEN_ON=unix:/tmp/mykitty-$PPID
+
 # eval "$(nodenv init -)"
 # eval "$(rbenv init -)"
 # alias ctags="`brew --prefix`/bin/ctags"
@@ -10,7 +12,10 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 # test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
 
 DEFAULT_USER=`whoami`
+export ZK_NOTEBOOK_DIR=~/notes
+alias tm='ASDF_RUBY_VERSION=3.0.2 tmuxinator'
 
+export EDITOR=nvim
 
 # [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 
@@ -22,7 +27,7 @@ export ZSH="/Users/joechiarella/.oh-my-zsh"
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 # ZSH_THEME="robbyrussell"
-ZSH_THEME="agnoster"
+ZSH_THEME="agnoster2"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -81,6 +86,7 @@ plugins=(
   macos
   kubectl
   asdf
+  gpg-agent
 )
 
 source $ZSH/oh-my-zsh.sh
