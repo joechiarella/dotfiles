@@ -38,77 +38,77 @@ return require("packer").startup(function()
 		end,
 	})
 
-	--use({
-	--"nvim-orgmode/orgmode",
-	--config = function()
-	--require("orgmode").setup({})
-	--end,
-	--})
+	use({
+		"nvim-orgmode/orgmode",
+		config = function()
+			require("orgmode").setup({})
+		end,
+	})
 
 	use({
 		"lewis6991/gitsigns.nvim",
 		config = function()
-      require("gitsigns").setup({
-			current_line_blame = true,
-			current_line_blame_opts = {
-				virt_text = true,
-				virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right_align'
-				delay = 1000,
-				ignore_whitespace = false,
-			},
-			on_attach = function(bufnr)
-				local gs = package.loaded.gitsigns
+			require("gitsigns").setup({
+				current_line_blame = true,
+				current_line_blame_opts = {
+					virt_text = true,
+					virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right_align'
+					delay = 1000,
+					ignore_whitespace = false,
+				},
+				on_attach = function(bufnr)
+					local gs = package.loaded.gitsigns
 
-				local function map(mode, l, r, opts)
-					opts = opts or {}
-					opts.buffer = bufnr
-					vim.keymap.set(mode, l, r, opts)
-				end
-
-				-- Navigation
-				map("n", "]c", function()
-					if vim.wo.diff then
-						return "]c"
+					local function map(mode, l, r, opts)
+						opts = opts or {}
+						opts.buffer = bufnr
+						vim.keymap.set(mode, l, r, opts)
 					end
-					vim.schedule(function()
-						gs.next_hunk()
+
+					-- Navigation
+					map("n", "]c", function()
+						if vim.wo.diff then
+							return "]c"
+						end
+						vim.schedule(function()
+							gs.next_hunk()
+						end)
+						return "<Ignore>"
+					end, { expr = true })
+
+					map("n", "[c", function()
+						if vim.wo.diff then
+							return "[c"
+						end
+						vim.schedule(function()
+							gs.prev_hunk()
+						end)
+						return "<Ignore>"
+					end, { expr = true })
+
+					-- Actions
+					map({ "n", "v" }, "<leader>hs", ":Gitsigns stage_hunk<CR>")
+					map({ "n", "v" }, "<leader>hr", ":Gitsigns reset_hunk<CR>")
+					map("n", "<leader>hS", gs.stage_buffer)
+					map("n", "<leader>hu", gs.undo_stage_hunk)
+					map("n", "<leader>hR", gs.reset_buffer)
+					map("n", "<leader>hp", gs.preview_hunk)
+					map("n", "<leader>hb", function()
+						gs.blame_line({ full = true })
 					end)
-					return "<Ignore>"
-				end, { expr = true })
-
-				map("n", "[c", function()
-					if vim.wo.diff then
-						return "[c"
-					end
-					vim.schedule(function()
-						gs.prev_hunk()
+					map("n", "<leader>tb", gs.toggle_current_line_blame)
+					map("n", "<leader>hd", gs.diffthis)
+					map("n", "<leader>hD", function()
+						gs.diffthis("~")
 					end)
-					return "<Ignore>"
-				end, { expr = true })
+					map("n", "<leader>td", gs.toggle_deleted)
 
-				-- Actions
-				map({ "n", "v" }, "<leader>hs", ":Gitsigns stage_hunk<CR>")
-				map({ "n", "v" }, "<leader>hr", ":Gitsigns reset_hunk<CR>")
-				map("n", "<leader>hS", gs.stage_buffer)
-				map("n", "<leader>hu", gs.undo_stage_hunk)
-				map("n", "<leader>hR", gs.reset_buffer)
-				map("n", "<leader>hp", gs.preview_hunk)
-				map("n", "<leader>hb", function()
-					gs.blame_line({ full = true })
-				end)
-				map("n", "<leader>tb", gs.toggle_current_line_blame)
-				map("n", "<leader>hd", gs.diffthis)
-				map("n", "<leader>hD", function()
-					gs.diffthis("~")
-				end)
-				map("n", "<leader>td", gs.toggle_deleted)
-
-				-- Text object
-				map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
-      end
-    })
-    end
-   })
+					-- Text object
+					map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
+				end,
+			})
+		end,
+	})
 
 	use("mrjones2014/smart-splits.nvim")
 	use("vim-test/vim-test")
@@ -180,7 +180,7 @@ return require("packer").startup(function()
 	use("ellisonleao/glow.nvim")
 
 	-- Load custom tree-sitter grammar for org filetype
-	--require("orgmode").setup_ts_grammar()
+	require("orgmode").setup_ts_grammar()
 
 	use({
 		"nvim-treesitter/nvim-treesitter",
@@ -198,8 +198,8 @@ return require("packer").startup(function()
 					-- Using this option may slow down your editor, and you may see some duplicate highlights.
 					-- Instead of true it can also be a list of languages
 					--			additional_vim_regex_highlighting = false,
-					disable = { "org" }, -- Remove this to use TS highlighter for some of the highlights (Experimental)
-					additional_vim_regex_highlighting = { "org" }, -- Required since TS highlighter doesn't support all syntax features (conceal)
+					--disable = { "org" }, -- Remove this to use TS highlighter for some of the highlights (Experimental)
+					--additional_vim_regex_highlighting = { "org" }, -- Required since TS highlighter doesn't support all syntax features (conceal)
 				},
 				incremental_selection = {
 					enable = true,
@@ -217,10 +217,11 @@ return require("packer").startup(function()
 		end,
 	})
 
-	--require("orgmode").setup({
-	--org_agenda_files = { "~/Dropbox/org/*", "~/my-orgs/**/*" },
-	--org_default_notes_file = "~/Dropbox/org/refile.org",
-	--})
+	require("orgmode").setup({
+		org_agenda_files = { "~/Dropbox/org/*", "~/my-orgs/**/*" },
+		org_default_notes_file = "~/Dropbox/org/refile.org",
+		win_split_mode = "auto",
+	})
 
 	use({
 		"jose-elias-alvarez/null-ls.nvim",
@@ -394,7 +395,6 @@ return require("packer").startup(function()
 		cmd = { "/Users/joechiarella/.lsp/elixir-ls/language_server.sh" },
 	}))
 
-
 	use("rktjmp/highlight-current-n.nvim")
 	use({
 		"karb94/neoscroll.nvim",
@@ -428,6 +428,7 @@ return require("packer").startup(function()
 		config = function()
 			require("lualine").setup({
 				options = {
+					globalstatus = true,
 					theme = "catppuccin",
 					-- theme = 'auto',
 					icons_enabled = true,
@@ -437,15 +438,11 @@ return require("packer").startup(function()
 				sections = {
 					lualine_a = { "mode" },
 					lualine_b = { "branch", "diff", "diagnostics" },
-					lualine_c = { "filename" },
+					lualine_c = { {
+						"filename",
+						path = 1,
+					} },
 					lualine_x = {
-						{
-							"encoding",
-						},
-						{
-							"fileformat",
-							icons_enabled = false,
-						},
 						{
 							"filetype",
 							icons_enabled = false,
@@ -453,6 +450,22 @@ return require("packer").startup(function()
 					},
 					lualine_y = { "progress" },
 					lualine_z = { "location" },
+				},
+				winbar = {
+					lualine_a = {},
+					lualine_b = {},
+					lualine_c = { "filename" },
+					lualine_x = {},
+					lualine_y = {},
+					lualine_z = {},
+				},
+				inactive_winbar = {
+					lualine_a = {},
+					lualine_b = {},
+					lualine_c = { "filename" },
+					lualine_x = {},
+					lualine_y = {},
+					lualine_z = {},
 				},
 				inactive_sections = {
 					lualine_a = {},
@@ -463,12 +476,12 @@ return require("packer").startup(function()
 					lualine_z = {},
 				},
 				--tabline = {
-				--lualine_a = { "buffers" },
-				--lualine_b = { "branch" },
-				--lualine_c = { "filename" },
+				--lualine_a = {},
+				--lualine_b = { "buffers" },
+				--lualine_c = {},
 				--lualine_x = {},
 				--lualine_y = {},
-				--lualine_z = { "tabs" },
+				--lualine_z = { "branch" },
 				--},
 			})
 		end,
@@ -504,6 +517,12 @@ return require("packer").startup(function()
 				p = { require("telescope.builtin").lsp_dynamic_workspace_symbols, "LSP Workspace Symbols" },
 				t = { require("telescope.builtin").treesitter, "Treesitter" },
 				l = { require("telescope").extensions.file_browser.file_browser, "File Browser" },
+				z = {
+					function()
+						require("telescope").extensions.file_browser.file_browser({ path = "%:p:h" })
+					end,
+					"File Browser (CWD)",
+				},
 				o = {
 					function()
 						require("telescope.builtin").oldfiles({ only_cwd = true })
