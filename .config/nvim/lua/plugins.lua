@@ -21,11 +21,24 @@ return require("packer").startup(function()
 	use("takac/vim-hardtime")
 	use("tpope/vim-sensible")
 	use("mrjones2014/legendary.nvim")
+	use("mrjones2014/smart-splits.nvim")
 	use("stevearc/dressing.nvim")
 	use("kassio/neoterm")
+	use("eandrju/cellular-automaton.nvim")
 
 	use("tpope/vim-dadbod")
 	--use("kristijanhusak/vim-dadbod-ui")
+	use({
+		"tamton-aquib/duck.nvim",
+		config = function()
+			vim.keymap.set("n", "<leader>dd", function()
+				require("duck").hatch()
+			end, {})
+			vim.keymap.set("n", "<leader>dk", function()
+				require("duck").cook()
+			end, {})
+		end,
+	})
 
 	use({
 		"folke/which-key.nvim",
@@ -38,12 +51,12 @@ return require("packer").startup(function()
 		end,
 	})
 
-	use({
-		"nvim-orgmode/orgmode",
-		config = function()
-			require("orgmode").setup({})
-		end,
-	})
+	--use({
+	--"nvim-orgmode/orgmode",
+	--config = function()
+	--require("orgmode").setup({})
+	--end,
+	--})
 
 	use({
 		"lewis6991/gitsigns.nvim",
@@ -110,7 +123,6 @@ return require("packer").startup(function()
 		end,
 	})
 
-	use("mrjones2014/smart-splits.nvim")
 	use("vim-test/vim-test")
 
 	--use({
@@ -180,7 +192,7 @@ return require("packer").startup(function()
 	use("ellisonleao/glow.nvim")
 
 	-- Load custom tree-sitter grammar for org filetype
-	require("orgmode").setup_ts_grammar()
+	--require("orgmode").setup_ts_grammar()
 
 	use({
 		"nvim-treesitter/nvim-treesitter",
@@ -217,11 +229,11 @@ return require("packer").startup(function()
 		end,
 	})
 
-	require("orgmode").setup({
-		org_agenda_files = { "~/Dropbox/org/*", "~/my-orgs/**/*" },
-		org_default_notes_file = "~/Dropbox/org/refile.org",
-		win_split_mode = "auto",
-	})
+	--require("orgmode").setup({
+	--org_agenda_files = { "~/Dropbox/org/*", "~/my-orgs/**/*" },
+	--org_default_notes_file = "~/Dropbox/org/refile.org",
+	--win_split_mode = "auto",
+	--})
 
 	use({
 		"jose-elias-alvarez/null-ls.nvim",
@@ -273,10 +285,12 @@ return require("packer").startup(function()
 			})
 		end,
 	})
-	use("nvim-treesitter/playground")
+	--use("nvim-treesitter/playground")
 
 	use("ThePrimeagen/vim-be-good")
-	use("ggandor/lightspeed.nvim")
+	--use("ggandor/lightspeed.nvim")
+	use("ggandor/leap.nvim")
+	require("leap").add_default_mappings()
 	use("francoiscabrol/ranger.vim")
 	use("rbgrouleff/bclose.vim")
 	use({ "nvim-telescope/telescope-file-browser.nvim" })
@@ -347,7 +361,7 @@ return require("packer").startup(function()
 	local on_attach = function(client, _)
 		-- Mappings.
 		local opts = { noremap = true, silent = true }
-		require("legendary").bind_keymaps({
+		require("legendary").keymaps({
 			{ "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", description = "LSP Declaration", opts },
 			{ "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", description = "LSP Defintion", opts },
 			{ "K", "<cmd>lua vim.lsp.buf.hover()<CR>", description = "LSP Hover", opts },
@@ -550,6 +564,11 @@ return require("packer").startup(function()
 				o = { "<cmd>UltestOutput<cr>", "Output" },
 				s = { "<cmd>TestSuite<cr>", "Suite" },
 				v = { "<cmd>TestVisit<cr>", "Visit" },
+			},
+			a = {
+				name = "Automaton",
+				a = { "<cmd>CellularAutomaton make_it_rain<CR>", "Make it rain" },
+				b = { "<cmd>CellularAutomaton game_of_life<CR>", "Game of life" },
 			},
 			--d = {
 			--name = "DadBod",
