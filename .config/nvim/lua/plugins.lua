@@ -14,7 +14,7 @@ vim.cmd([[
     autocmd BufWritePost plugins.lua source <afile> | PackerCompile
   augroup end
 ]])
-vim.cmd([[autocmd BufWritePre * lua vim.lsp.buf.formatting_sync(nil, 3000)]])
+vim.cmd([[autocmd BufWritePre * lua vim.lsp.buf.format()]])
 
 return require("packer").startup(function()
 	use("wbthomason/packer.nvim")
@@ -242,7 +242,7 @@ return require("packer").startup(function()
 
 				-- ruby
 				--null_ls.builtins.formatting.rubocop,
-				null_ls.builtins.diagnostics.rubocop,
+				--null_ls.builtins.diagnostics.rubocop,
 
 				-- xml
 				null_ls.builtins.formatting.xmllint,
@@ -378,8 +378,8 @@ return require("packer").startup(function()
 	local coq = require("coq")
 	-- vim.lsp.set_log_level("debug")
 	require("lspconfig").solargraph.setup(coq.lsp_ensure_capabilities({
-		cmd = { "solargraph", "stdio" },
-		--cmd = { "bundle", "exec", "solargraph", "stdio" },
+		--cmd = { "solargraph", "stdio" },
+		cmd = { "bundle", "exec", "solargraph", "stdio" },
 		flags = {
 			debounce_text_changes = 150,
 		},
