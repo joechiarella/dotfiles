@@ -25,6 +25,24 @@ return require("packer").startup(function()
 	use("stevearc/dressing.nvim")
 	use("kassio/neoterm")
 	use("eandrju/cellular-automaton.nvim")
+	use({
+		"shortcuts/no-neck-pain.nvim",
+		tag = "*",
+		config = function()
+			require("no-neck-pain").setup({})
+		end,
+	})
+
+	vim.api.nvim_create_augroup("OnVimEnter", { clear = true })
+	vim.api.nvim_create_autocmd({ "VimEnter" }, {
+		group = "OnVimEnter",
+		pattern = "*",
+		callback = function()
+			vim.schedule(function()
+				require("no-neck-pain").enable()
+			end)
+		end,
+	})
 
 	use("tpope/vim-dadbod")
 	--use("kristijanhusak/vim-dadbod-ui")
@@ -335,7 +353,7 @@ return require("packer").startup(function()
 			})
 			require("telescope").load_extension("fzy_native")
 			require("telescope").load_extension("file_browser")
-	require("telescope").load_extension("neoclip")
+			require("telescope").load_extension("neoclip")
 		end,
 	})
 
@@ -565,7 +583,7 @@ return require("packer").startup(function()
 				o = { "<cmd>UltestOutput<cr>", "Output" },
 				s = { "<cmd>TestSuite<cr>", "Suite" },
 				v = { "<cmd>TestVisit<cr>", "Visit" },
-        t = { "<cmd>Tredo<cr>", "Redo" },
+				t = { "<cmd>Tredo<cr>", "Redo" },
 			},
 			a = {
 				name = "Automaton",
