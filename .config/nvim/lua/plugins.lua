@@ -18,8 +18,8 @@ vim.cmd([[autocmd BufWritePre * lua vim.lsp.buf.format()]])
 
 return require("packer").startup(function()
 	use("wbthomason/packer.nvim")
-	use("takac/vim-hardtime")
-	use("tpope/vim-sensible")
+	--use("takac/vim-hardtime")
+	--use("tpope/vim-sensible")
 	use("mrjones2014/legendary.nvim")
 	use("mrjones2014/smart-splits.nvim")
 	use("stevearc/dressing.nvim")
@@ -33,16 +33,36 @@ return require("packer").startup(function()
 		end,
 	})
 
-	vim.api.nvim_create_augroup("OnVimEnter", { clear = true })
-	vim.api.nvim_create_autocmd({ "VimEnter" }, {
-		group = "OnVimEnter",
-		pattern = "*",
-		callback = function()
-			vim.schedule(function()
-				require("no-neck-pain").enable()
-			end)
+	use({
+		"stevearc/aerial.nvim",
+		config = function()
+			require("aerial").setup({
+				layout = {
+					placement = "edge",
+				},
+				attach_mode = "global",
+			})
 		end,
 	})
+
+	use("epwalsh/obsidian.nvim")
+	require("obsidian").setup({
+		dir = "~/Documents/Obsidian/Salesloft",
+		completion = {
+			nvim_cmp = true, -- if using nvim-cmp, otherwise set to false
+		},
+	})
+
+	--vim.api.nvim_create_augroup("OnVimEnter", { clear = true })
+	--vim.api.nvim_create_autocmd({ "VimEnter" }, {
+	--group = "OnVimEnter",
+	--pattern = "*",
+	--callback = function()
+	--vim.schedule(function()
+	--require("no-neck-pain").enable()
+	--end)
+	--end,
+	--})
 
 	use("tpope/vim-dadbod")
 	--use("kristijanhusak/vim-dadbod-ui")
@@ -305,11 +325,10 @@ return require("packer").startup(function()
 	})
 	--use("nvim-treesitter/playground")
 
-	use("ThePrimeagen/vim-be-good")
+	--use("ThePrimeagen/vim-be-good")
 	--use("ggandor/lightspeed.nvim")
 	use("ggandor/leap.nvim")
 	require("leap").add_default_mappings()
-	use("francoiscabrol/ranger.vim")
 	use("rbgrouleff/bclose.vim")
 	use({ "nvim-telescope/telescope-file-browser.nvim" })
 
@@ -404,20 +423,77 @@ return require("packer").startup(function()
 		--client.resolved_capabilities.document_formatting = false
 		--client.resolved_capabilities.document_range_formatting = false
 	end
-	use({ "ms-jpq/coq_nvim" })
-	use({ "ms-jpq/coq.artifacts" })
 
-	local coq = require("coq")
+	-- COMPLETION
+	use("hrsh7th/cmp-nvim-lsp")
+	use("hrsh7th/cmp-buffer")
+	use("hrsh7th/cmp-path")
+	--use("hrsh7th/cmp-cmdline")
+	use("hrsh7th/nvim-cmp")
+
+	use("hrsh7th/cmp-vsnip")
+	use("hrsh7th/vim-vsnip")
+
+	local cmp = require("cmp")
+
+	cmp.setup({
+		snippet = {
+			-- REQUIRED - you must specify a snippet engine
+			expand = function(args)
+				vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+				-- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+				-- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+				-- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+			end,
+		},
+		window = {
+			-- completion = cmp.config.window.bordered(),
+			-- documentation = cmp.config.window.bordered(),
+		},
+		mapping = cmp.mapping.preset.insert({
+			["<C-b>"] = cmp.mapping.scroll_docs(-4),
+			["<C-f>"] = cmp.mapping.scroll_docs(4),
+			["<C-Space>"] = cmp.mapping.complete(),
+			["<C-e>"] = cmp.mapping.abort(),
+			["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+		}),
+		sources = cmp.config.sources({
+			{ name = "nvim_lsp" },
+			--{ name = "vsnip" }, -- For vsnip users.
+			-- { name = 'luasnip' }, -- For luasnip users.
+			-- { name = 'ultisnips' }, -- For ultisnips users.
+			-- { name = 'snippy' }, -- For snippy users.
+		}, {
+			{ name = "buffer" },
+		}),
+	})
+
+	--cmp.setup.cmdline({ "/", "?" }, {
+	--mapping = cmp.mapping.preset.cmdline(),
+	--sources = {
+	--{ name = "buffer" },
+	--},
+	--})
+
+	--use({ "ms-jpq/coq_nvim" })
+	--use({ "ms-jpq/coq.artifacts" })
+
+	--local coq = require("coq")
 	-- vim.lsp.set_log_level("debug")
-	require("lspconfig").solargraph.setup(coq.lsp_ensure_capabilities({
+	local capabilities = require("cmp_nvim_lsp").default_capabilities()
+	require("lspconfig").solargraph.setup({
 		--cmd = { "solargraph", "stdio" },
 		cmd = { "bundle", "exec", "solargraph", "stdio" },
 		flags = {
 			debounce_text_changes = 150,
 		},
 		on_attach = on_attach,
-	}))
-	require("lspconfig").elixirls.setup(coq.lsp_ensure_capabilities({
+		capabilities = capabilities,
+		solargraph = {
+			diagnostics = true,
+		},
+	})
+	require("lspconfig").elixirls.setup({
 		-- Unix
 		on_attach = on_attach,
 		settings = {
@@ -426,22 +502,14 @@ return require("packer").startup(function()
 			},
 		},
 		cmd = { "/Users/joechiarella/.lsp/elixir-ls/language_server.sh" },
-	}))
+		capabilities = capabilities,
+	})
 
 	use("rktjmp/highlight-current-n.nvim")
-	use({
-		"karb94/neoscroll.nvim",
-		config = function()
-			require("neoscroll").setup()
-		end,
-	})
 
-	use({
-		"j-hui/fidget.nvim",
-		config = function()
-			require("fidget").setup()
-		end,
-	})
+	use("j-hui/fidget.nvim")
+
+	require("fidget").setup({})
 
 	--  use {
 	--    'pwntester/octo.nvim',
@@ -456,82 +524,45 @@ return require("packer").startup(function()
 	--  }
 
 	use({
-		"nvim-lualine/lualine.nvim",
-		requires = { "kyazdani42/nvim-web-devicons" },
-		config = function()
-			require("lualine").setup({
-				options = {
-					globalstatus = true,
-					theme = "catppuccin",
-					-- theme = 'auto',
-					icons_enabled = true,
-					section_separators = { left = "", right = "" },
-					--section_separators = { left = "", right = "" },
-				},
-				sections = {
-					lualine_a = { "mode" },
-					lualine_b = { "branch", "diff", "diagnostics" },
-					lualine_c = { {
-						"filename",
-						path = 1,
-					} },
-					lualine_x = {
-						{
-							"filetype",
-							icons_enabled = false,
-						},
-					},
-					lualine_y = { "progress" },
-					lualine_z = { "location" },
-				},
-				winbar = {
-					lualine_a = {},
-					lualine_b = {},
-					lualine_c = { "filename" },
-					lualine_x = {},
-					lualine_y = {},
-					lualine_z = {},
-				},
-				inactive_winbar = {
-					lualine_a = {},
-					lualine_b = {},
-					lualine_c = { "filename" },
-					lualine_x = {},
-					lualine_y = {},
-					lualine_z = {},
-				},
-				inactive_sections = {
-					lualine_a = {},
-					lualine_b = {},
-					lualine_c = { "filename" },
-					lualine_x = { "location" },
-					lualine_y = {},
-					lualine_z = {},
-				},
-				--tabline = {
-				--lualine_a = {},
-				--lualine_b = { "buffers" },
-				--lualine_c = {},
-				--lualine_x = {},
-				--lualine_y = {},
-				--lualine_z = { "branch" },
-				--},
-			})
-		end,
-	})
-
-	use({
 		"catppuccin/nvim",
 		as = "catppuccin",
-		config = function()
-			require("catppuccin").setup({
-				transparent_background = false,
-				term_colors = false,
-			})
-			vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
-			vim.cmd("colorscheme catppuccin")
-		end,
 	})
+	require("catppuccin").setup({
+		transparent_background = false,
+		term_colors = false,
+	})
+	vim.cmd.colorscheme("catppuccin-mocha")
+
+	use({
+		"nvim-lualine/lualine.nvim",
+		requires = { "kyazdani42/nvim-web-devicons" },
+	})
+
+	require("lualine").setup({
+		options = {
+			globalstatus = true,
+			theme = "catppuccin",
+			icons_enabled = true,
+			section_separators = { left = "", right = "" },
+		},
+		sections = {
+			lualine_a = { "mode" },
+			lualine_b = { "branch", "diff", "diagnostics" },
+			lualine_c = { {
+				"filename",
+				path = 1,
+			} },
+			lualine_x = {
+				{
+					"filetype",
+					icons_enabled = false,
+				},
+			},
+			lualine_y = { "progress" },
+			lualine_z = { "location" },
+		},
+	})
+
 	local wk = require("which-key")
 	wk.register({
 		["<leader>"] = {
@@ -574,13 +605,9 @@ return require("packer").startup(function()
 			},
 			t = {
 				name = "Test",
-				S = { "<cmd>UltestSummary<cr>", "Summary" },
-				a = { "<cmd>Ultest<cr>", "All" },
-				d = { "<cmd>UltestDebug<cr>", "Debug" },
 				f = { "<cmd>TestFile<cr>", "File" },
 				l = { "<cmd>TestLast<cr>", "Last" },
 				n = { "<cmd>TestNearest<cr>", "Nearest" },
-				o = { "<cmd>UltestOutput<cr>", "Output" },
 				s = { "<cmd>TestSuite<cr>", "Suite" },
 				v = { "<cmd>TestVisit<cr>", "Visit" },
 				t = { "<cmd>Tredo<cr>", "Redo" },
@@ -590,6 +617,7 @@ return require("packer").startup(function()
 				a = { "<cmd>CellularAutomaton make_it_rain<CR>", "Make it rain" },
 				b = { "<cmd>CellularAutomaton game_of_life<CR>", "Game of life" },
 			},
+			o = { "<cmd>AerialToggle!<CR>", "Open Aerial" },
 			--d = {
 			--name = "DadBod",
 			--b = { "<cmd>db#op_exec()", "Execute" },
@@ -598,7 +626,6 @@ return require("packer").startup(function()
 			q = { vim.diagnostic.setloclist, "LSP Set Loc List" },
 			y = { "<cmd>let @*=expand('%:p')<CR>", "Copy filename" },
 			Y = { "<cmd>let @*=(expand('%:p') . ':' . line('.'))<CR>", "Copy filename:line" },
-			r = { "<cmd>Ranger<CR>", "Open Ranger" },
 			h = { "<cmd>HardTimeToggle<CR>", "Toggle HardTime" },
 		},
 		["[d"] = { vim.diagnostic.goto_prev, "LSP Prev Diagnostic" },
