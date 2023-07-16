@@ -16,6 +16,12 @@ vim.cmd([[
 ]])
 vim.cmd([[autocmd BufWritePre * lua vim.lsp.buf.format()]])
 
+vim.api.nvim_create_user_command(
+	"DiffCommitLine",
+	"lua require('telescope').extensions.advanced_git_search.diff_commit_line()",
+	{ range = true }
+)
+
 return require("packer").startup(function()
 	use("wbthomason/packer.nvim")
 	--use("takac/vim-hardtime")
@@ -25,23 +31,90 @@ return require("packer").startup(function()
 	use("stevearc/dressing.nvim")
 	use("kassio/neoterm")
 	use("eandrju/cellular-automaton.nvim")
+
+	--use("github/copilot.vim")
+	--use({
+	--"zbirenbaum/copilot.lua",
+	--cmd = "Copilot",
+	--event = "InsertEnter",
+	--config = function()
+	--require("copilot").setup({
+	--suggestion = { enabled = false },
+	--panel = { enabled = false },
+	--})
+	--end,
+	--})
+
+	--use({
+	--"zbirenbaum/copilot-cmp",
+	--after = { "copilot.lua" },
+	--config = function()
+	--require("copilot_cmp").setup()
+	--end,
+	--})
 	use({
 		"shortcuts/no-neck-pain.nvim",
 		tag = "*",
 		config = function()
-			require("no-neck-pain").setup({})
+			require("no-neck-pain").setup({
+				autocmds = {
+					-- When `true`, enables the plugin when you start Neovim.
+					-- If the main window is  a side tree (e.g. NvimTree) or a dashboard, the command is delayed until it finds a valid window.
+					-- The command is cleaned once it has successfuly ran once.
+					--- @type boolean
+					enableOnVimEnter = true,
+					-- When `true`, enables the plugin when you enter a new Tab.
+					-- note: it does not trigger if you come back to an existing tab, to prevent unwanted interfer with user's decisions.
+					--- @type boolean
+					enableOnTabEnter = false,
+					-- When `true`, reloads the plugin configuration after a colorscheme change.
+					--- @type boolean
+					reloadOnColorSchemeChange = false,
+				},
+			})
 		end,
+	})
+
+	use({
+		"aaronhallaert/advanced-git-search.nvim",
+		config = function()
+			require("telescope").load_extension("advanced_git_search")
+		end,
+		requires = {
+			"nvim-telescope/telescope.nvim",
+			-- to show diff splits and open commits in browser
+			"tpope/vim-fugitive",
+		},
 	})
 
 	use({
 		"stevearc/aerial.nvim",
 		config = function()
 			require("aerial").setup({
+				icons = {
+					Class = "",
+					Constructor = "",
+					Enum = "",
+					Function = "",
+					Interface = "",
+					Module = "",
+					Method = "",
+					Struct = "",
+				},
+				nerd_font = true,
 				layout = {
 					placement = "edge",
 				},
 				attach_mode = "global",
 			})
+		end,
+	})
+
+	use({
+		"projekt0n/circles.nvim",
+		requires = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("circles").setup()
 		end,
 	})
 
@@ -213,7 +286,9 @@ return require("packer").startup(function()
 		"ruifm/gitlinker.nvim",
 		requires = "nvim-lua/plenary.nvim",
 		config = function()
-			require("gitlinker").setup()
+			require("gitlinker").setup({
+				mappings = nil,
+			})
 		end,
 	})
 
@@ -278,6 +353,9 @@ return require("packer").startup(function()
 		config = function()
 			local null_ls = require("null-ls")
 			local sources = {
+				-- git
+				null_ls.builtins.code_actions.gitsigns,
+
 				-- elixir
 				--null_ls.builtins.formatting.mix,
 				null_ls.builtins.diagnostics.credo,
@@ -404,24 +482,7 @@ return require("packer").startup(function()
 			{ "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", description = "LSP Defintion", opts },
 			{ "K", "<cmd>lua vim.lsp.buf.hover()<CR>", description = "LSP Hover", opts },
 			{ "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", description = "LSP Impl", opts },
-			-- your keymaps here
 		})
-		-- See `:help vim.lsp.*` for documentation on any of the below functions
-		-- buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-		-- buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-		-- buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-		-- buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-		-- buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-		-- buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-		-- buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-		-- buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-		-- buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-		-- buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-		-- buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-		-- buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-		-- buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-		--client.resolved_capabilities.document_formatting = false
-		--client.resolved_capabilities.document_range_formatting = false
 	end
 
 	-- COMPLETION
@@ -431,17 +492,20 @@ return require("packer").startup(function()
 	--use("hrsh7th/cmp-cmdline")
 	use("hrsh7th/nvim-cmp")
 
-	use("hrsh7th/cmp-vsnip")
-	use("hrsh7th/vim-vsnip")
+	--use("hrsh7th/cmp-vsnip")
+	--use("hrsh7th/vim-vsnip")
+
+	use({ "L3MON4D3/LuaSnip" })
 
 	local cmp = require("cmp")
+	local luasnip = require("luasnip")
 
 	cmp.setup({
 		snippet = {
 			-- REQUIRED - you must specify a snippet engine
 			expand = function(args)
-				vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-				-- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+				--vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+				require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
 				-- require('snippy').expand_snippet(args.body) -- For `snippy` users.
 				-- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
 			end,
@@ -458,15 +522,24 @@ return require("packer").startup(function()
 			["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
 		}),
 		sources = cmp.config.sources({
+			-- Copilot Source
+			--{ name = "copilot", group_index = 2 },
 			{ name = "nvim_lsp" },
 			--{ name = "vsnip" }, -- For vsnip users.
-			-- { name = 'luasnip' }, -- For luasnip users.
+			{ name = "luasnip" }, -- For luasnip users.
 			-- { name = 'ultisnips' }, -- For ultisnips users.
 			-- { name = 'snippy' }, -- For snippy users.
 		}, {
 			{ name = "buffer" },
 		}),
 	})
+
+	use({ "saadparwaiz1/cmp_luasnip" })
+
+	use("rafamadriz/friendly-snippets")
+	require("luasnip").filetype_extend("ruby", { "rails" })
+
+	require("luasnip.loaders.from_vscode").lazy_load()
 
 	--cmp.setup.cmdline({ "/", "?" }, {
 	--mapping = cmp.mapping.preset.cmdline(),
@@ -535,7 +608,7 @@ return require("packer").startup(function()
 
 	use({
 		"nvim-lualine/lualine.nvim",
-		requires = { "kyazdani42/nvim-web-devicons" },
+		requires = { "nvim-tree/nvim-web-devicons" },
 	})
 
 	require("lualine").setup({
@@ -548,18 +621,38 @@ return require("packer").startup(function()
 		sections = {
 			lualine_a = { "mode" },
 			lualine_b = { "branch", "diff", "diagnostics" },
-			lualine_c = { {
-				"filename",
-				path = 1,
-			} },
+			lualine_c = {
+				{
+					"filename",
+					path = 1,
+				},
+				"aerial",
+			},
 			lualine_x = {
 				{
 					"filetype",
-					icons_enabled = false,
+					icons_enabled = true,
 				},
 			},
 			lualine_y = { "progress" },
 			lualine_z = { "location" },
+		},
+		winbar = {
+			lualine_a = {},
+			lualine_b = {},
+			lualine_c = { { "filename", path = 1 } },
+			lualine_x = {},
+			lualine_y = {},
+			lualine_z = {},
+		},
+
+		inactive_winbar = {
+			lualine_a = {},
+			lualine_b = {},
+			lualine_c = { { "filename", path = 1 } },
+			lualine_x = {},
+			lualine_y = {},
+			lualine_z = {},
 		},
 	})
 
@@ -595,6 +688,35 @@ return require("packer").startup(function()
 				},
 				c = { "<cmd>Telescope neoclip unnamed extra=star,plus<CR>", "Neoclip" },
 			},
+			g = {
+				name = "Git",
+				y = {
+					function()
+						require("gitlinker").get_buf_range_url("n")
+					end,
+					"Permalink to line",
+				},
+				b = { require("telescope").extensions.advanced_git_search.diff_branch_file, "Browse Branches" },
+				l = { require("telescope").extensions.advanced_git_search.diff_commit_line, "View commits for line" },
+				f = { require("telescope").extensions.advanced_git_search.diff_commit_file, "View commits for file" },
+				c = {
+					require("telescope").extensions.advanced_git_search.search_log_content,
+					"Search Log Content for Repo",
+				},
+				s = {
+					require("telescope").extensions.advanced_git_search.search_log_content_file,
+					"Search Log Content for File",
+				},
+			},
+			l = {
+				name = "LSP",
+				a = { vim.lsp.buf.code_action, "Code Action" },
+				k = { vim.lsp.buf.signature_help, "Signature Help" },
+				d = { vim.lsp.buf.type_definition, "Type Definition" },
+				r = { vim.lsp.buf.rename, "Rename" },
+				e = { vim.diagnostic.open_float, "LSP Open Diagnostic" },
+				q = { vim.diagnostic.setloclist, "LSP Set Loc List" },
+			},
 			x = {
 				name = "Trouble",
 				x = { "<cmd>TroubleToggle<CR>", "Open Trouble" },
@@ -622,8 +744,6 @@ return require("packer").startup(function()
 			--name = "DadBod",
 			--b = { "<cmd>db#op_exec()", "Execute" },
 			--},
-			e = { vim.diagnostic.open_float, "LSP Open Diagnostic" },
-			q = { vim.diagnostic.setloclist, "LSP Set Loc List" },
 			y = { "<cmd>let @*=expand('%:p')<CR>", "Copy filename" },
 			Y = { "<cmd>let @*=(expand('%:p') . ':' . line('.'))<CR>", "Copy filename:line" },
 			h = { "<cmd>HardTimeToggle<CR>", "Toggle HardTime" },
