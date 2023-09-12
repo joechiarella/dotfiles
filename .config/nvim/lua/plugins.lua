@@ -412,7 +412,7 @@ return require("packer").startup(function()
 
 	use({
 		"nvim-telescope/telescope.nvim",
-		requires = { { "nvim-lua/plenary.nvim" } },
+		requires = { { "nvim-lua/plenary.nvim" }, { "nvim-telescope/telescope-live-grep-args.nvim" } },
 		config = function()
 			require("telescope").setup({
 				defaults = {
@@ -451,6 +451,7 @@ return require("packer").startup(function()
 			require("telescope").load_extension("fzy_native")
 			require("telescope").load_extension("file_browser")
 			require("telescope").load_extension("neoclip")
+			require("telescope").load_extension("live_grep_args")
 		end,
 	})
 
@@ -577,6 +578,14 @@ return require("packer").startup(function()
 		cmd = { "/Users/joechiarella/.lsp/elixir-ls/language_server.sh" },
 		capabilities = capabilities,
 	})
+	require("lspconfig").tsserver.setup({
+		on_attach = function(client)
+			on_attach(client)
+			client.server_capabilities.documentFormattingProvider = false
+			client.server_capabilities.documentRangeFormattingProvider = false
+		end,
+		capabilities = capabilities,
+	})
 
 	use("rktjmp/highlight-current-n.nvim")
 
@@ -662,7 +671,7 @@ return require("packer").startup(function()
 			f = {
 				name = "Telescope",
 				f = { require("telescope.builtin").find_files, "Find Files" },
-				g = { require("telescope.builtin").live_grep, "Live Grep" },
+				g = { require("telescope").extensions.live_grep_args.live_grep_args, "Live Grep" },
 				b = { require("telescope.builtin").buffers, "Buffers" },
 				h = { require("telescope.builtin").help_tags, "Help Tags" },
 				r = { require("telescope.builtin").lsp_references, "LSP References" },
