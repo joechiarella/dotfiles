@@ -33,31 +33,22 @@ vim.opt.termguicolors = true
 vim.api.nvim_set_keymap("n", "<Space>", "<Nop>", { noremap = true })
 vim.g.mapleader = " "
 
-require("plugins")
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
 
-vim.cmd("colorscheme catppuccin")
+require("lazy").setup("plugins", {})
 
-vim.cmd([[
-" ******* highlight-current-n plugin
-nmap n <Plug>(highlight-current-n-n)
-nmap N <Plug>(highlight-current-n-N)
-
-nmap * *N
-
-" Some QOL autocommands
-augroup ClearSearchHL
-  autocmd!
-  " You may only want to see hlsearch /while/ searching, you can automatically
-  " toggle hlsearch with the following autocommands
-  autocmd CmdlineEnter /,\? set hlsearch
-  autocmd CmdlineLeave /,\? set nohlsearch
-  " this will apply similar n|N highlighting to the first search result
-  " careful with escaping ? in lua, you may need \\?
-  autocmd CmdlineLeave /,\? lua require('highlight_current_n')['/,?']()
-augroup END
-
-syntax off
-  ]])
+--vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
 
 vim.opt.background = "dark"
 
