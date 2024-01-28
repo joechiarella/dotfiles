@@ -25,6 +25,7 @@ return {
           },
           cmd = { "/Users/joechiarella/.lsp/elixir-ls/language_server.sh" },
         },
+        tsserver = {},
       },
     },
   },
