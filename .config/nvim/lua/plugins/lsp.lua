@@ -28,6 +28,18 @@ return {
 				},
 			},
 		},
+		setup = {
+			-- example to setup with typescript.nvim
+			-- tsserver = function(_, opts)
+			--   require("typescript").setup({ server = opts })
+			--   return true
+			-- end,
+			-- Specify * to use this function as a fallback for any server
+			-- ["*"] = function(server, opts) end,
+			elixirls = function(_, _)
+				return true
+			end,
+		},
 	},
 	-- {
 	-- 	"elixir-tools/elixir-tools.nvim",
@@ -40,7 +52,7 @@ return {
 	--
 	-- 		elixir.setup({
 	-- 			nextls = {
-	-- 				enable = false,
+	-- 				enable = true,
 	-- 				init_options = {
 	-- 					experimental = {
 	-- 						completions = {
@@ -49,9 +61,11 @@ return {
 	-- 					},
 	-- 				},
 	-- 			},
-	-- 			credo = {},
+	-- 			credo = {
+	-- 				enable = false,
+	-- 			},
 	-- 			elixirls = {
-	-- 				enable = true,
+	-- 				enable = false,
 	-- 				settings = elixirls.settings({
 	-- 					dialyzerEnabled = false,
 	-- 					enableTestLenses = false,

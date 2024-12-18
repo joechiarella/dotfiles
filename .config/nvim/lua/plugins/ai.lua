@@ -1,5 +1,26 @@
 return {
 	{
+		"CopilotC-Nvim/CopilotChat.nvim",
+		opts = function()
+			local user = vim.env.USER or "User"
+			user = user:sub(1, 1):upper() .. user:sub(2)
+			return {
+				auto_insert_mode = true,
+				question_header = "  " .. user .. " ",
+				answer_header = "  Copilot ",
+				window = {
+					width = 0.4,
+				},
+				model = "claude-3.5-sonnet",
+				prompts = {
+					Tests = {
+						prompt = "> /COPILOT_GENERATE\n\nPlease generate tests for my code.  Do not use Mox.",
+					},
+				},
+			}
+		end,
+	},
+	{
 		"yetone/avante.nvim",
 		event = "VeryLazy",
 		lazy = false,
@@ -48,7 +69,7 @@ return {
 	},
 	{
 		"olimorris/codecompanion.nvim",
-		enabled = true,
+		enabled = false,
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
@@ -61,6 +82,7 @@ return {
 		keys = {
 			{ "<C-a>", "<cmd>CodeCompanionActions<cr>", mode = { "n", "v" } },
 			{ "<Leader>a", "<cmd>CodeCompanionChat Toggle<cr>", mode = { "n", "v" } },
+			{ "ga", "<cmd>CodeCompanionChat Add<cr>", mode = { "v" } },
 			-- vim.api.nvim_set_keymap("n", "<C-a>", "<cmd>CodeCompanionActions<cr>", { noremap = true, silent = true })
 			-- vim.api.nvim_set_keymap("v", "<C-a>", "<cmd>CodeCompanionActions<cr>", { noremap = true, silent = true })
 			-- vim.api.nvim_set_keymap("n", "<LocalLeader>a", "<cmd>CodeCompanionChat Toggle<cr>", { noremap = true, silent = true })

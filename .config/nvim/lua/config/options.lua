@@ -21,3 +21,5 @@ let test#elixir#patterns = {
   \ 'test':      ['\v^\s*test (".+") do'],
 \}
 ]])
+
+vim.cmd([[cab cc CodeCompanion]])
