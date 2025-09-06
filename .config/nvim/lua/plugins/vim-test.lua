@@ -11,4 +11,8 @@ return {
 			{ "<leader>tt", "<cmd>Tredo<cr>", desc = "Redo" },
 		},
 	},
+	{
+		"nvim-neotest/neotest",
+		commit = "52fca671",
+	},
 }

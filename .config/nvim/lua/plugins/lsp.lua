@@ -17,8 +17,12 @@ return {
 					},
 				},
 				tsserver = {},
+				-- expert = {
+				-- 	settings = {},
+				-- },
 				elixirls = {
 					mason = false,
+					enabled = true,
 					settings = {
 						elixirLS = {
 							dialyzerEnabled = false,

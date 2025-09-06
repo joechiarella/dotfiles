@@ -22,4 +22,7 @@ let test#elixir#patterns = {
 \}
 ]])
 
+-- vim.lsp.enable("expert")
+vim.lsp.enable("elixirls")
+
 vim.cmd([[cab cc CodeCompanion]])

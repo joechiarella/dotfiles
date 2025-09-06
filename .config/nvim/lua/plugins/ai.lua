@@ -1,4 +1,11 @@
 return {
+	-- {
+	-- 	"zbirenbaum/copilot.lua",
+	--
+	-- 	opts = {
+	-- 		copilot_model = "gpt-4o-copilot",
+	-- 	},
+	-- },
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
 		opts = function()
@@ -11,7 +18,7 @@ return {
 				window = {
 					width = 0.4,
 				},
-				model = "claude-3.5-sonnet",
+				model = "claude-3.7-sonnet",
 				prompts = {
 					Tests = {
 						prompt = "> /COPILOT_GENERATE\n\nPlease generate tests for my code.  Do not use Mox.",
