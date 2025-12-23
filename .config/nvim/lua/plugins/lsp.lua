@@ -17,18 +17,26 @@ return {
 					},
 				},
 				tsserver = {},
-				-- expert = {
-				-- 	settings = {},
-				-- },
+				expert = {
+					enabled = true,
+					settings = {},
+					cmd = { "/Users/joe/.lsp/expert/apps/expert/_build/prod/rel/plain/bin/start_expert", "--stdio" },
+				},
 				elixirls = {
 					mason = false,
-					enabled = true,
+					enabled = false,
 					settings = {
 						elixirLS = {
 							dialyzerEnabled = false,
 						},
 					},
-					cmd = { "/Users/joe/.lsp/elixir-ls/language_server.sh" },
+					cmd = { "/Users/joe/.lsp/elixir-ls/release/language_server.sh" },
+					-- cmd = { "/Users/joe/.lsp/elixir-ls/language_server.sh" },
+				},
+				copilot = {
+					cmd_env = {
+						ASDF_NODEJS_VERSION = "23.11.0",
+					},
 				},
 			},
 		},

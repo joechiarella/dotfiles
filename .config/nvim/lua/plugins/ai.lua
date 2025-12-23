@@ -1,4 +1,12 @@
 return {
+	{
+		"zbirenbaum/copilot.lua",
+		opts = {
+			filetypes = { markdown = false, help = false },
+			copilot_node_command = "/Users/joe/.asdf/installs/nodejs/23.11.0/bin/node",
+			-- vim.fn.expand("$FNM_DIR") .. "/node-versions/v22.13.0/installation/bin/node",
+		},
+	},
 	-- {
 	-- 	"zbirenbaum/copilot.lua",
 	--
@@ -6,27 +14,27 @@ return {
 	-- 		copilot_model = "gpt-4o-copilot",
 	-- 	},
 	-- },
-	{
-		"CopilotC-Nvim/CopilotChat.nvim",
-		opts = function()
-			local user = vim.env.USER or "User"
-			user = user:sub(1, 1):upper() .. user:sub(2)
-			return {
-				auto_insert_mode = true,
-				question_header = "  " .. user .. " ",
-				answer_header = "  Copilot ",
-				window = {
-					width = 0.4,
-				},
-				model = "claude-3.7-sonnet",
-				prompts = {
-					Tests = {
-						prompt = "> /COPILOT_GENERATE\n\nPlease generate tests for my code.  Do not use Mox.",
-					},
-				},
-			}
-		end,
-	},
+	-- {
+	-- 	"CopilotC-Nvim/CopilotChat.nvim",
+	-- 	opts = function()
+	-- 		local user = vim.env.USER or "User"
+	-- 		user = user:sub(1, 1):upper() .. user:sub(2)
+	-- 		return {
+	-- 			auto_insert_mode = true,
+	-- 			question_header = "  " .. user .. " ",
+	-- 			answer_header = "  Copilot ",
+	-- 			window = {
+	-- 				width = 0.4,
+	-- 			},
+	-- 			-- model = "claude-3.7-sonnet",
+	-- 			prompts = {
+	-- 				Tests = {
+	-- 					prompt = "> /COPILOT_GENERATE\n\nPlease generate tests for my code.  Do not use Mox.",
+	-- 				},
+	-- 			},
+	-- 		}
+	-- 	end,
+	-- },
 	{
 		"yetone/avante.nvim",
 		event = "VeryLazy",

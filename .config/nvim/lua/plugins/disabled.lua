@@ -1,7 +1,10 @@
 return {
 	{
-		{ "echasnovski/mini.pairs", enabled = false },
+		{ "nvim-mini/mini.pairs", enabled = false },
 	},
+	-- {
+	--  	{ "folke/noice.nvim", enabled = false},
+	-- },
 	-- {
 	-- 	{ "lukas-reineke/indent-blankline.nvim", enabled = false },
 	-- },
@@ -45,4 +48,8 @@ return {
 			{ "/", mode = { "n", "x", "o" }, false },
 		},
 	},
+	-- {
+	-- 	"saghen/blink.cmp",
+	-- 	enabled = false,
+	-- },
 }
